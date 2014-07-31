@@ -1,0 +1,5 @@
+#Ignore these directories
+Library
+Temp
+
+#ignore these files
