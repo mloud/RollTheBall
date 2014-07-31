@@ -8,4 +8,5 @@ public static class Utils
 		return new Vector2(Screen.width, Screen.height);
 	}
 
+
 }
