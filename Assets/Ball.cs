@@ -203,7 +203,14 @@ public class Ball : MonoBehaviour
 	{
 		if (CurrentSegment != null)
 		{
-			MoveFromWaypoint();
+			// try jump to other segment first
+			OnEndSegmentReached();
+
+			if (CurrentState != State.Jumping)
+			{
+
+				MoveFromWaypoint();
+			}
 		}
 	}
 }
