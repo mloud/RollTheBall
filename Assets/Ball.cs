@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class Ball : MonoBehaviour
 {
+	[SerializeField]
+	float speed;
+
 	private const float DESTINATION_TRESHOLD = 0.01f;
 
 	private Segment CurrentSegment { get; set; }
@@ -60,9 +63,14 @@ public class Ball : MonoBehaviour
 
 	void OnEndSegmentReached()
 	{
-		List<Connector> nearestConnectors = CurrentSegment.GetSortedConnectors(CurrentWaypoint.transform.position);
+		Debug.Log("Ball.OnEndSegmentReached() " + CurrentSegment.name);
+
+		List<Connector> nearestConnectors = CurrentSegment.GetSortedConnectors(transform.position);
 	
+		Debug.Log ("Ball.OnEndSegmentReached() - nearest connector " + nearestConnectors[0].name);
+
 		Segment connectedSegment = Game.Instance.GetConnectedSegment(nearestConnectors[0]);
+
 
 		//Segment connectedSegment = Game.Instance.FindConnectedSegment(nearestConnectors[0], CurrentSegment);
 
@@ -90,7 +98,7 @@ public class Ball : MonoBehaviour
 
 		Vector3 currentScreenPos = Camera.main.WorldToScreenPoint(transform.position);
 
-		Vector3 newScreenPos = Vector3.Lerp(currentScreenPos, dstScreenPos, Time.deltaTime * 10.0f);
+		Vector3 newScreenPos = Vector3.Lerp(currentScreenPos, dstScreenPos, Time.deltaTime * speed);
 
 		if ( (newScreenPos - dstScreenPos).magnitude < 10)
 		{
@@ -112,7 +120,7 @@ public class Ball : MonoBehaviour
 		{
 			Waypoint nextWaypoint = DestinationWaypoints[0];
 			
-			transform.position = Vector3.Lerp(transform.position, nextWaypoint.transform.position, Time.deltaTime * 10.0f);
+			transform.position = Vector3.Lerp(transform.position, nextWaypoint.transform.position, Time.deltaTime * speed);
 			
 			//we are at the end
 			if ( (transform.position - nextWaypoint.transform.position).sqrMagnitude < DESTINATION_TRESHOLD * DESTINATION_TRESHOLD)
@@ -139,6 +147,8 @@ public class Ball : MonoBehaviour
 
 	void JumpToSegment(Segment segment)
 	{
+		Debug.Log("Ball.JumpToSegment() " + segment.name);
+
 		CurrentState = State.Jumping;
 
 		Vector3 currentScreenCoord = Camera.main.WorldToScreenPoint(transform.position);

@@ -58,7 +58,7 @@ public class Segment : MonoBehaviour
 		sortedConnectors.Sort(delegate(Connector conn1, Connector conn2)
 		                          {
 			float sqrtDistWp1 = (pos - conn1.transform.position).sqrMagnitude;
-			float sqrtDistWp2 = (pos - conn1.transform.position).sqrMagnitude;
+			float sqrtDistWp2 = (pos - conn2.transform.position).sqrMagnitude;
 			return sqrtDistWp1 < sqrtDistWp2 ? -1 : 1;
 		});
 		
