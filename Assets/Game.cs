@@ -4,9 +4,6 @@ using System.Collections.Generic;
 public class Game : MonoBehaviour
 {
 	[SerializeField]
-	List<Segment> Segments;
-
-	[SerializeField]
 	Transform root;
 
 	[SerializeField]
@@ -26,7 +23,9 @@ public class Game : MonoBehaviour
 
 	private static Game _instance;
 
-	SceneController SceneController { get; set; }
+	private SceneController SceneController { get; set; }
+
+	private List<Segment> Segments { get; set; }
 
 
 	void Awake()
@@ -36,6 +35,8 @@ public class Game : MonoBehaviour
 
 	void Start()
 	{
+		Segments = new List<Segment>(Utils.FindAllDeep<Segment>(root));
+
 		SceneController = new SceneController();
 		SceneController.RootPoint = root;
 
