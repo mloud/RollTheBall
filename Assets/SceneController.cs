@@ -14,7 +14,7 @@ public class SceneController : UI.ITouchListener
 
 
 	private Vector3 _initialRotation;
-	private UI.Touch _touchBegan;
+	private UI.Touch? _touchBegan;
 	private Zone _touchZone;
 
 
@@ -48,24 +48,27 @@ public class SceneController : UI.ITouchListener
 
 	public void TouchBegan(UI.Touch touch)
 	{
-		_initialRotation = RootPoint.transform.localRotation.eulerAngles;
+		if (_touchBegan == null)
+		{
+			_initialRotation = RootPoint.transform.localRotation.eulerAngles;
 
-		_touchBegan = touch;
+			_touchBegan = touch;
 	
-		_touchZone = ResolveTouchZone(touch.Position);
+			_touchZone = ResolveTouchZone(touch.Position);
+		}
 	}
 	
 	
 	public void TouchEnded(UI.Touch touch)
 	{
-
+		_touchBegan = null;
 	}
 	
 	public void TouchMoved(UI.Touch touch)
 	{
 		if (_touchZone != Zone.None)
 		{
-			Vector3 touchBeginEndVec = touch.Position - _touchBegan.Position;
+			Vector3 touchBeginEndVec = touch.Position - _touchBegan.Value.Position;
 	
 			Vector3 rotation = new Vector3();
 
