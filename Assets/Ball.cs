@@ -213,4 +213,15 @@ public class Ball : MonoBehaviour
 			}
 		}
 	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.gameObject.GetComponent<Finish>() != null)
+		{
+			MUI.Instance.ShowFinishGame();
+		}
+
+	}
+
+
 }

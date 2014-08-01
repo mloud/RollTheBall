@@ -103,7 +103,7 @@ public class Game : MonoBehaviour
 						Vector3 pos1 = Camera.main.WorldToScreenPoint(otherConn.transform.position);
 						Vector3 pos2 = Camera.main.WorldToScreenPoint(connector.transform.position);
 						
-						if ( (pos1 - pos2).magnitude < 10.0f)
+						if ( (pos1 - pos2).magnitude < 20.0f)
 						{
 							return Segments[i];
 						}
@@ -141,7 +141,7 @@ public class Game : MonoBehaviour
 					Vector3 pos1 = Camera.main.WorldToScreenPoint(connector1.transform.position);
 					Vector3 pos2 = Camera.main.WorldToScreenPoint(connector2.transform.position);
 					
-					if ( (pos1 - pos2).magnitude < 10.0f)
+					if ( (pos1 - pos2).magnitude < 20.0f)
 					{
 						return true;
 					}
