@@ -41,5 +41,45 @@ public class SceneViewCameraTest : ScriptableObject
 			}
 		
 		}
-	  }
+	}
+
+	[MenuItem("MultiCamera/ResetRotationToDefault")]
+	static public void resetToDefault()
+	{
+		Transform root = GameObject.Find("Root").transform;
+		root.localEulerAngles = new Vector3 (135, 45, 0);
+	}
+
+	[MenuItem("MultiCamera/RotateRight")]
+	static public void rotateRight()
+	{
+		Transform root = GameObject.Find("Root").transform;
+		root.Rotate(new Vector3(0, 90, 0), Space.World);
+	}
+
+	[MenuItem("MultiCamera/RotateLeft")]
+	static public void rotateLeft()
+	{
+		Transform root = GameObject.Find("Root").transform;
+		root.Rotate(new Vector3(0, -90, 0), Space.World);
+	}
+
+	[MenuItem("MultiCamera/RotateUp")]
+	static public void rotateUp()
+	{
+		Transform root = GameObject.Find("Root").transform;
+		root.Rotate(new Vector3(90, 0, 0), Space.World);
+	}
+	
+	[MenuItem("MultiCamera/RotateDown")]
+	static public void rotateDown()
+	{
+		Transform root = GameObject.Find("Root").transform;
+		root.Rotate(new Vector3(-90, 0, 0), Space.World);
+	}
+
+
+
+
+
 }
