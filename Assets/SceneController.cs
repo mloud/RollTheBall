@@ -23,6 +23,10 @@ public class SceneController : UI.ITouchListener
 	private Vector3? _dstRotation;
 	private Vector3 _actualRotation;
 
+
+	private Vector3? _rotateBy;
+	private int _rotateBySteps;
+
 	public SceneController()
 	{
 		UI.TouchManager.Instance.Register(this);
@@ -46,20 +50,41 @@ public class SceneController : UI.ITouchListener
 
 	public void Update()
 	{
-		if (_dstRotation != null)
+
+	// NOT USED NOW
+//		if (_dstRotation != null)
+//		{
+//
+//			_actualRotation = Vector3.Lerp(_actualRotation, _dstRotation.Value, Time.deltaTime * 5.0f);
+//
+//
+//			Vector3 newRot = _initialRotation + _actualRotation;
+//			RootPoint.transform.eulerAngles = newRot;
+//
+//			if (RootPoint.transform.eulerAngles.x != newRot.x )
+//
+//
+//			Debug.Log ("Rotation: " + 	RootPoint.transform.eulerAngles.ToString());
+//		
+//			if ( (_actualRotation - _dstRotation.Value).magnitude < 1.0f)
+//			{
+//				RootPoint.transform.eulerAngles = _initialRotation  + _dstRotation.Value;
+//
+//				_dstRotation = null;
+//				Debug.Log ("EndRotation: " + 	RootPoint.transform.eulerAngles.ToString());
+//
+//			}
+//		}
+
+		if (_rotateBy != null)
 		{
-			_actualRotation = Vector3.Lerp(_actualRotation, _dstRotation.Value, Time.deltaTime * 5.0f);
+			RootPoint.transform.Rotate(_rotateBy.Value,Space.World);
 
-			RootPoint.transform.eulerAngles = _initialRotation + _actualRotation;
+			--_rotateBySteps;
 
-			Debug.Log ("Rotation: " + 	RootPoint.transform.eulerAngles.ToString());
-		
-			if ( (_actualRotation - _dstRotation.Value).magnitude < 1.0f)
+			if (_rotateBySteps == 0)
 			{
-				RootPoint.transform.eulerAngles = _initialRotation  + _dstRotation.Value;
-				_dstRotation = null;
-				Debug.Log ("EndRotation: " + 	RootPoint.transform.eulerAngles.ToString());
-
+				_rotateBy = null;
 			}
 		}
 
@@ -126,7 +151,7 @@ public class SceneController : UI.ITouchListener
 	public void KeyPressed(KeyCode keyCode)
 	{
 		// ignore of rotation in progress
-		if (_dstRotation != null)
+		if (_dstRotation != null && _rotateBy != null)
 			return;
 
 
@@ -149,6 +174,10 @@ public class SceneController : UI.ITouchListener
 
 		_actualRotation = Vector3.zero;
 		_initialRotation = RootPoint.transform.eulerAngles;
+
+
+		_rotateBySteps = 20;
+		_rotateBy = _dstRotation / _rotateBySteps;
 
 		Debug.Log ("Destination rotation: " + (_initialRotation + _dstRotation).ToString() );
 
