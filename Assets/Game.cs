@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour
+public class Game : MonoBehaviour, UI.IObjectHitListener
 {
 	[SerializeField]
 	Transform root;
@@ -38,6 +38,8 @@ public class Game : MonoBehaviour
 
 	void Start()
 	{
+		UI.TouchManager.Instance.RegisterObjectHitListener(this);
+
 		Segments = new List<Segment>(Utils.FindAllDeep<Segment>(root));
 
 		SceneController = new SceneController();
@@ -45,11 +47,14 @@ public class Game : MonoBehaviour
 
 
 		ball.PlaceToSegment(BallStartSegment, BallStartWaypoint);
+
 	}
 
 	void OnDestroy()
 	{
 		SceneController.Release();
+
+		UI.TouchManager.Instance.UntegisterObjectHitListener(this);
 	}
 
 
@@ -155,5 +160,32 @@ public class Game : MonoBehaviour
 		}
 		return false;
 	}
+
+	public void ObjectHit(GameObject obj)
+	{
+		if (obj.name ==  "BtnNext")
+		{
+			LoadNextLevel();
+		}
+		else if (obj.name ==  "BtnReplay")
+		{
+			Replay();
+		}
+	}
+
+
+	void LoadNextLevel()
+	{
+		Application.LoadLevel(Application.loadedLevel + 1);
+	}
+
+	void Replay()
+	{
+	
+		Application.LoadLevel(Application.loadedLevel);
+	}
+
+
+
 
 }

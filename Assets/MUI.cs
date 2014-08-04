@@ -18,7 +18,7 @@ public class MUI : MonoBehaviour
 
 	public void ShowFinishGame()
 	{
-		finish.SetActive(true);
+		GameObject finishGo = Instantiate(finish) as GameObject;
 	}
 
 
