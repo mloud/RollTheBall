@@ -33,4 +33,23 @@ public static class Utils
 		return resuts;
 	}
 
+
+	public static Vector2 ScreenInWorldUnits ()
+	{
+		Camera cam = Camera.main;
+
+		Vector3 p1 = cam.ViewportToWorldPoint(new Vector3(0, 0, cam.nearClipPlane));  
+		Vector3 p2 = cam.ViewportToWorldPoint(new Vector3(1, 0, cam.nearClipPlane));
+		Vector3 p3 = cam.ViewportToWorldPoint(new Vector3(1, 1, cam.nearClipPlane));
+		
+		float width  = (p2 - p1).magnitude;
+		float height = (p3 - p2).magnitude;
+		
+		return new Vector2 (width, height);
+	}
+
+
+
+
+
 }
