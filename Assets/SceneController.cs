@@ -138,6 +138,7 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	
 	public void TouchMoved(UI.Touch touch)
 	{
+		return; // !!!
 		if (_touchZone != Zone.None)
 		{
 			Vector3 touchBeginEndVec = touch.Position - _touchBegan.Value.Position;
