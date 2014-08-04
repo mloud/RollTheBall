@@ -171,6 +171,10 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		{
 			Replay();
 		}
+		else if (obj.name == "BtnRestart")
+		{
+			Replay ();
+		}
 	}
 
 
@@ -183,6 +187,12 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	{
 	
 		Application.LoadLevel(Application.loadedLevel);
+	}
+
+
+	void RestartLevel()
+	{
+
 	}
 
 
