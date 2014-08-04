@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class SceneController : UI.ITouchListener
+public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 #if UNITY_EDITOR
 , UI.IKeyPressedListener
 #endif
 {
+	public enum RotDirection
+	{
+		Left, 
+		Right,
+		Up,
+		Down
+	}
+
+
 	public enum Zone 
 	{
 		Bottom, 
@@ -30,6 +39,7 @@ public class SceneController : UI.ITouchListener
 	public SceneController()
 	{
 		UI.TouchManager.Instance.Register(this);
+		UI.TouchManager.Instance.RegisterObjectHitListener(this);
 
 #if UNITY_EDITOR
 		UI.TouchManager.Instance.RegisterKeyListener(this);
@@ -39,6 +49,7 @@ public class SceneController : UI.ITouchListener
 	public void Release()
 	{
 		UI.TouchManager.Instance.Unregister(this);
+		UI.TouchManager.Instance.UntegisterObjectHitListener(this);
 
 	
 #if UNITY_EDITOR
@@ -147,6 +158,55 @@ public class SceneController : UI.ITouchListener
 	}
 
 
+	public void ObjectHit(GameObject obj)
+	{
+		if (obj.name == "BtnArrLeft")
+		{
+			Rotate(SceneController.RotDirection.Left);
+		}
+		else if (obj.name == "BtnArrRight")
+		{
+			Rotate(SceneController.RotDirection.Right);
+		}
+		else if (obj.name == "BtnArrUp")
+		{
+			Rotate(SceneController.RotDirection.Up);
+		}
+		else if (obj.name == "BtnArrDown")
+		{
+			Rotate(SceneController.RotDirection.Down);
+		}
+	}
+
+	public void Rotate(RotDirection dir)
+	{
+		if (_rotateBy == null)
+		{
+			switch(dir)
+			{
+			case RotDirection.Down:
+				_dstRotation = new Vector3(-90,0,0);
+				break;
+
+			case RotDirection.Up:
+				_dstRotation = new Vector3(90,0,0);
+				break;
+
+			case RotDirection.Left:
+				_dstRotation = new Vector3(0,90,0);
+				break;
+
+			case RotDirection.Right:
+				_dstRotation = new Vector3(0,-90,0);
+				break;
+
+			}
+		
+			_rotateBySteps = 10;
+			_rotateBy = _dstRotation / _rotateBySteps;
+		}
+	}
+
 #if UNITY_EDITOR
 	public void KeyPressed(KeyCode keyCode)
 	{
@@ -176,11 +236,8 @@ public class SceneController : UI.ITouchListener
 		_initialRotation = RootPoint.transform.eulerAngles;
 
 
-		_rotateBySteps = 20;
+		_rotateBySteps = 10;
 		_rotateBy = _dstRotation / _rotateBySteps;
-
-		Debug.Log ("Destination rotation: " + (_initialRotation + _dstRotation).ToString() );
-
 	}
 #endif
 	

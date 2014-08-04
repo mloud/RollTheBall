@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Anchor.cs" />
      <Compile Include="Assets\Ball.cs" />
+     <Compile Include="Assets\Button.cs" />
      <Compile Include="Assets\Connector.cs" />
      <Compile Include="Assets\Finish.cs" />
      <Compile Include="Assets\Game.cs" />

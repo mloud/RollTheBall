@@ -28,6 +28,12 @@ namespace UI
 		void KeyPressed(KeyCode keyCode);
 	}
 
+	public interface IObjectHitListener
+	{
+		void ObjectHit(GameObject obj);
+	}
+
+
 	public class TouchManager : MonoBehaviour
 	{
 		public static TouchManager Instance { get { return _instance; }}
@@ -35,6 +41,8 @@ namespace UI
 		private static TouchManager _instance;
 
 		private List<ITouchListener> TouchListeners { get; set; }
+
+		private List<IObjectHitListener> ObjectHitListeners{ get; set; }
 
 #if UNITY_EDITOR
 		private List<IKeyPressedListener> KeyPressListeners { get; set; }
@@ -44,6 +52,8 @@ namespace UI
 		{
 			_instance = this;
 			TouchListeners = new List<ITouchListener>();
+
+			ObjectHitListeners = new List<IObjectHitListener>();
 
 #if UNITY_EDITOR
 			KeyPressListeners = new List<IKeyPressedListener>();
@@ -59,6 +69,16 @@ namespace UI
 		public void Unregister(ITouchListener listener)
 		{
 			TouchListeners.Remove(listener);
+		}
+
+		public void RegisterObjectHitListener(IObjectHitListener listener)
+		{
+			ObjectHitListeners.Add(listener);
+		}
+
+		public void UntegisterObjectHitListener(IObjectHitListener listener)
+		{
+			ObjectHitListeners.Remove(listener);
 		}
 
 #if UNITY_EDITOR
@@ -120,6 +140,8 @@ namespace UI
 			{
 				TouchListeners[i].TouchEnded(touch);
 			}
+
+			ProcessHitButtons(touch.Position);
 		}
 
 		public List<T> GetGameObjectsAt<T>(Vector3 pos) where T: MonoBehaviour
@@ -144,6 +166,20 @@ namespace UI
 			}
 
 			return result;
+		}
+
+
+		private void ProcessHitButtons(Vector3 touchPos)
+		{
+			List<Button> buttons = GetGameObjectsAt<Button>(touchPos);
+
+			if (buttons.Count > 0)
+			{
+				for (int i = 0; i < ObjectHitListeners.Count; ++i)
+				{
+					ObjectHitListeners[i].ObjectHit(buttons[0].gameObject);
+				}
+			}
 		}
 
 
