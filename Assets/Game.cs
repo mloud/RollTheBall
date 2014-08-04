@@ -15,9 +15,12 @@ public class Game : MonoBehaviour
 	[SerializeField]
 	Waypoint BallStartWaypoint;
 
-
 	[SerializeField]
 	Transform BallFinish;
+
+	[SerializeField]
+	float SegmentConnectedDistance;
+
 
 	public static Game Instance { get { return _instance; }}
 
@@ -52,6 +55,8 @@ public class Game : MonoBehaviour
 
 	void Update () 
 	{
+		SceneController.Update();
+
 		for (int i = 0; i < Segments.Count; ++i)
 		{
 			Segments[i].Highlight(false);
@@ -103,7 +108,7 @@ public class Game : MonoBehaviour
 						Vector3 pos1 = Camera.main.WorldToScreenPoint(otherConn.transform.position);
 						Vector3 pos2 = Camera.main.WorldToScreenPoint(connector.transform.position);
 						
-						if ( (pos1 - pos2).magnitude < 20.0f)
+						if ( (pos1 - pos2).magnitude < SegmentConnectedDistance)
 						{
 							return Segments[i];
 						}
@@ -141,14 +146,13 @@ public class Game : MonoBehaviour
 					Vector3 pos1 = Camera.main.WorldToScreenPoint(connector1.transform.position);
 					Vector3 pos2 = Camera.main.WorldToScreenPoint(connector2.transform.position);
 					
-					if ( (pos1 - pos2).magnitude < 20.0f)
+					if ( (pos1 - pos2).magnitude < SegmentConnectedDistance)
 					{
 						return true;
 					}
 				}
 			}
 		}
-		
 		return false;
 	}
 

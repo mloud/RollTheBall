@@ -23,6 +23,11 @@ namespace UI
 		void TouchMoved(Touch touch);
 	}
 
+	public interface IKeyPressedListener
+	{
+		void KeyPressed(KeyCode keyCode);
+	}
+
 	public class TouchManager : MonoBehaviour
 	{
 		public static TouchManager Instance { get { return _instance; }}
@@ -31,11 +36,18 @@ namespace UI
 
 		private List<ITouchListener> TouchListeners { get; set; }
 
+#if UNITY_EDITOR
+		private List<IKeyPressedListener> KeyPressListeners { get; set; }
+#endif
 
 		void Awake()
 		{
 			_instance = this;
 			TouchListeners = new List<ITouchListener>();
+
+#if UNITY_EDITOR
+			KeyPressListeners = new List<IKeyPressedListener>();
+#endif
 		}
 
 
@@ -49,12 +61,43 @@ namespace UI
 			TouchListeners.Remove(listener);
 		}
 
+#if UNITY_EDITOR
+
+		public void RegisterKeyListener(IKeyPressedListener listener)
+		{
+			KeyPressListeners.Add(listener);
+		}
+
+		public void UnregisterKeyListener(IKeyPressedListener listener)
+		{
+			KeyPressListeners.Remove(listener);
+		}
+#endif
+
+
 
 		void Update ()
 		{
 			ProcessTouch();
+
+#if UNITY_EDITOR
+			ProcessKeyPress();	
+#endif
 		}
 
+
+#if UNITY_EDITOR
+
+		private void KeyPress(KeyCode keyCode)
+		{
+			for (int i = 0; i < KeyPressListeners.Count; ++i)
+			{
+				KeyPressListeners[i].KeyPressed(keyCode);
+			}
+		}
+
+#endif
+	
 		private void TouchBegan(Touch touch)
 		{
 			for (int i = 0; i < TouchListeners.Count; ++i)
@@ -124,6 +167,27 @@ namespace UI
 				TouchMoved(new Touch(0, Input.mousePosition));
 			}
 		}
+
+		void ProcessKeyPress()
+		{
+			if (Input.GetKeyDown(KeyCode.LeftArrow))
+			{
+				KeyPress(KeyCode.LeftArrow);
+			}
+			else if (Input.GetKeyDown(KeyCode.RightArrow))
+			{
+				KeyPress(KeyCode.RightArrow);
+			}
+			else if (Input.GetKeyDown(KeyCode.DownArrow))
+			{
+				KeyPress(KeyCode.DownArrow);
+			}
+			else if (Input.GetKeyDown(KeyCode.UpArrow))
+			{
+				KeyPress(KeyCode.UpArrow);
+			}
+		}
+
 #else
 		void ProcessTouch()
 		{

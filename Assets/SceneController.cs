@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 
 public class SceneController : UI.ITouchListener
+#if UNITY_EDITOR
+, UI.IKeyPressedListener
+#endif
 {
 	public enum Zone 
 	{
@@ -16,18 +19,51 @@ public class SceneController : UI.ITouchListener
 	private Vector3 _initialRotation;
 	private UI.Touch? _touchBegan;
 	private Zone _touchZone;
-	
-	
+
+	private Vector3? _dstRotation;
+	private Vector3 _actualRotation;
+
 	public SceneController()
 	{
 		UI.TouchManager.Instance.Register(this);
+
+#if UNITY_EDITOR
+		UI.TouchManager.Instance.RegisterKeyListener(this);
+#endif
 	}
 	
 	public void Release()
 	{
 		UI.TouchManager.Instance.Unregister(this);
-	}
+
 	
+#if UNITY_EDITOR
+		UI.TouchManager.Instance.UnregisterKeyListener(this);
+#endif
+	}
+
+
+
+	public void Update()
+	{
+		if (_dstRotation != null)
+		{
+			_actualRotation = Vector3.Lerp(_actualRotation, _dstRotation.Value, Time.deltaTime * 5.0f);
+
+			RootPoint.transform.eulerAngles = _initialRotation + _actualRotation;
+
+			Debug.Log ("Rotation: " + 	RootPoint.transform.eulerAngles.ToString());
+		
+			if ( (_actualRotation - _dstRotation.Value).magnitude < 1.0f)
+			{
+				RootPoint.transform.eulerAngles = _initialRotation  + _dstRotation.Value;
+				_dstRotation = null;
+				Debug.Log ("EndRotation: " + 	RootPoint.transform.eulerAngles.ToString());
+
+			}
+		}
+
+	}
 	
 	private Zone ResolveTouchZone(Vector3 pos)
 	{
@@ -84,5 +120,39 @@ public class SceneController : UI.ITouchListener
 			RootPoint.transform.eulerAngles = _initialRotation + rotation;
 		}
 	}
+
+
+#if UNITY_EDITOR
+	public void KeyPressed(KeyCode keyCode)
+	{
+		// ignore of rotation in progress
+		if (_dstRotation != null)
+			return;
+
+
+		if (keyCode == KeyCode.LeftArrow)
+		{
+			_dstRotation = new Vector3(0,90,0);
+		}
+		else if (keyCode == KeyCode.RightArrow)
+		{
+			_dstRotation = new Vector3(0,-90,0);
+		}
+		else if (keyCode == KeyCode.UpArrow)
+		{
+			_dstRotation = new Vector3(90,0,0);
+		}
+		else if (keyCode == KeyCode.DownArrow)
+		{
+			_dstRotation = new Vector3(-90,0,0);
+		}
+
+		_actualRotation = Vector3.zero;
+		_initialRotation = RootPoint.transform.eulerAngles;
+
+		Debug.Log ("Destination rotation: " + (_initialRotation + _dstRotation).ToString() );
+
+	}
+#endif
 	
 }
