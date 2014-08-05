@@ -59,5 +59,50 @@ public static class Utils
 	}
 
 
+	public class SegmentConnection
+	{
+		public Connector Conn1 { get; set; }
+		public Connector Conn2 { get; set; }
+	}
+
+	public static SegmentConnection IsSegmentConnected(Camera camera, Segment seg1, Segment seg2, float tresholdDistance, Connector seg1Connector = null,  Connector seg2Connector = null)
+	{
+		for (int i = 0; i < seg1.Connectors.Count; ++i)
+		{
+			Connector connector1  = seg1.Connectors[i];
+			
+			if ( (seg1Connector != null && connector1 != seg1Connector) || !connector1.Active)
+				continue;
+			
+			for (int j = 0; j < seg2.Connectors.Count; ++j)
+			{
+				
+				if (seg2Connector != null && seg2.Connectors[j] != seg2Connector)
+					continue;
+				
+				
+				Connector connector2  = seg2.Connectors[j];
+				
+				if (connector2.Active)
+				{
+					
+					//project points to screenspace - if in touch, they are connected
+					Vector3 pos1 = camera.WorldToScreenPoint(connector1.transform.position);
+					Vector3 pos2 = camera.WorldToScreenPoint(connector2.transform.position);
+					
+					if ( (pos1 - pos2).magnitude < tresholdDistance)
+					{
+						SegmentConnection segConn = new SegmentConnection();
+						segConn.Conn1 = connector1;
+						segConn.Conn2 = connector2;
+
+						return segConn;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 
 }

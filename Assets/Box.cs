@@ -8,13 +8,6 @@ public class Box : MonoBehaviour
 	Box[] boxes;
 #endif
 
-	// Use this for initialization
-	void Start ()
-	{
-	
-	}
-	
-
 
 #if UNITY_EDITOR
 	void OnDrawGizmos()

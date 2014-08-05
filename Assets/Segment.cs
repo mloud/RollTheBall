@@ -3,12 +3,28 @@ using System.Collections.Generic;
 
 public class Segment : MonoBehaviour
 {
-	public List<Connector> Connectors { get; set; }
+
+	public List<Connector> Connectors 
+	{
+		get { 
+			if (_connectors == null)
+			{
+				MakeListOfPipes();
+				MakeListOfConnectors();
+			}
+			return _connectors;
+		}
+
+		private set { _connectors = value; }
+	}
+
 
 	private List<GameObject> PipeList { get; set; }
 
 	public List<Waypoint> Waypoints { get; set; }
 
+
+	private List<Connector> _connectors;
 
 	private void Awake()
 	{
@@ -88,8 +104,4 @@ public class Segment : MonoBehaviour
 		}
 	}
 
-	void Update ()
-	{
-	
-	}
 }

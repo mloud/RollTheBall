@@ -62,16 +62,22 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	{
 		SceneController.Update();
 
+		HighlightConnectedSegments();
+	}
+
+
+	public void HighlightConnectedSegments()
+	{
 		for (int i = 0; i < Segments.Count; ++i)
 		{
 			Segments[i].Highlight(false);
 		}
-	
+		
 		for (int i = 0; i < Segments.Count; ++i)
 		{
 			for (int j = i + 1; j < Segments.Count; ++j)
 			{
-				if (IsSegmentConnected(Segments[i], Segments[j]))
+				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j], SegmentConnectedDistance) != null)
 				{
 					Segments[i].Highlight(true);
 					Segments[j].Highlight(true);
@@ -87,7 +93,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		{
 			if (Segments[i] != inputSegment)
 			{
-				if (IsSegmentConnected(inputSegment, Segments[i], inputSegConnector, null))
+				if (Utils.IsSegmentConnected(Camera.main, inputSegment, Segments[i], SegmentConnectedDistance, inputSegConnector, null) != null)
 				{
 					return Segments[i];
 				}
@@ -126,40 +132,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	}
 
 
-	public bool IsSegmentConnected(Segment seg1, Segment seg2, Connector seg1Connector = null,  Connector seg2Connector = null)
-	{
-		for (int i = 0; i < seg1.Connectors.Count; ++i)
-		{
-			Connector connector1  = seg1.Connectors[i];
 
-			if ( (seg1Connector != null && connector1 != seg1Connector) || !connector1.Active)
-				continue;
-			
-			for (int j = 0; j < seg2.Connectors.Count; ++j)
-			{
-
-				if (seg2Connector != null && seg2.Connectors[j] != seg2Connector)
-					continue;
-				
-
-				Connector connector2  = seg2.Connectors[j];
-				
-				if (connector2.Active)
-				{
-					
-					//project points to screenspace - if in touch, they are connected
-					Vector3 pos1 = Camera.main.WorldToScreenPoint(connector1.transform.position);
-					Vector3 pos2 = Camera.main.WorldToScreenPoint(connector2.transform.position);
-					
-					if ( (pos1 - pos2).magnitude < SegmentConnectedDistance)
-					{
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
 
 	public void ObjectHit(GameObject obj)
 	{
