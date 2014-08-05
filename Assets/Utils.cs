@@ -48,7 +48,15 @@ public static class Utils
 		return new Vector2 (width, height);
 	}
 
+	public static void ClosestPoints(Vector3 a1, Vector3 a2, Vector3 b1, Vector3 b2, out Vector3 closestA, out Vector3 closestB)
+	{
+		float nA = Vector3.Dot(Vector3.Cross(b2 - b1, a1 - b1), Vector3.Cross(a2-a1,b2-b1));
+		float nB = Vector3.Dot(Vector3.Cross(a2 - a1, a1 - b1), Vector3.Cross(a2-a1,b2-b1));
+		float d = Vector3.Dot(Vector3.Cross(a2 - a1,b2 - b1),Vector3.Cross(a2 - a1, b2 - b1));
 
+		closestA = a1 + (nA / d) * (a2 - a1);
+		closestB = b1 + (nB / d) * (b2 - b1);
+	}
 
 
 
