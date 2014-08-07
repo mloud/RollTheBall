@@ -52,20 +52,24 @@ public class Rotator : Manipulator
 	
 	public override void Manipulate()
 	{
-		if (RotateAround == RotationAround.x)
+		if (!Running)
 		{
-			axeToRotate = new Vector3(1,0,0);
+
+			if (RotateAround == RotationAround.x)
+			{
+				axeToRotate = new Vector3(1,0,0);
+			}
+			else if (RotateAround == RotationAround.y)
+			{
+				axeToRotate = new Vector3(0,1,0);
+			}
+			else if (RotateAround == RotationAround.z)
+			{
+				axeToRotate = new Vector3(0,0,1);
+			}
+			Running = true;
+			angleToRotate = OnClickRotation;
 		}
-		else if (RotateAround == RotationAround.y)
-		{
-			axeToRotate = new Vector3(0,1,0);
-		}
-		else if (RotateAround == RotationAround.z)
-		{
-			axeToRotate = new Vector3(0,0,1);
-		}
-		Running = true;
-		angleToRotate = OnClickRotation;
 	}
 
 }
