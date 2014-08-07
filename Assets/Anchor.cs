@@ -22,22 +22,22 @@ public class Anchor : MonoBehaviour
 		Vector3 pos = transform.position;
 		if (anchorType == Type.Left)
 		{
-			pos.x = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).x;
+			pos.x = MUI.Instance.UICamera.ViewportToWorldPoint(new Vector3(0, 0, MUI.Instance.UICamera.nearClipPlane)).x;
 			pos.x += offset;
 		}
 		else if (anchorType == Type.Right)
 		{
-			pos.x = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, Camera.main.nearClipPlane)).x;
+			pos.x = MUI.Instance.UICamera.ViewportToWorldPoint(new Vector3(1, 0, MUI.Instance.UICamera.nearClipPlane)).x;
 			pos.x -= offset;
 		}
 		else if (anchorType == Type.Top)
 		{
-			pos.y = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, Camera.main.nearClipPlane)).y;
+			pos.y = MUI.Instance.UICamera.ViewportToWorldPoint(new Vector3(0, 1, MUI.Instance.UICamera.nearClipPlane)).y;
 			pos.y -= offset;
 		}
 		else if (anchorType == Type.Bottom)
 		{
-			pos.y = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).y;
+			pos.y = MUI.Instance.UICamera.ViewportToWorldPoint(new Vector3(0, 0, MUI.Instance.UICamera.nearClipPlane)).y;
 			pos.y += offset;
 		}
 

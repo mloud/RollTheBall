@@ -48,6 +48,8 @@ namespace UI
 		private List<IKeyPressedListener> KeyPressListeners { get; set; }
 #endif
 
+		private List<Camera> Cameras { get; set; }
+
 		void Awake()
 		{
 			_instance = this;
@@ -58,6 +60,8 @@ namespace UI
 #if UNITY_EDITOR
 			KeyPressListeners = new List<IKeyPressedListener>();
 #endif
+
+			Cameras = new List<Camera>(GameObject.FindObjectsOfType<Camera>());
 		}
 
 
@@ -148,20 +152,24 @@ namespace UI
 		{
 			List<T> result = new List<T>();
 
-			RaycastHit[] hits;
 
-			Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-			Ray ray = cam.ScreenPointToRay(pos);
-
-			hits = Physics.RaycastAll(ray);
-
-			for (int i = 0; i < hits.Length; ++i)
+			for (int i = 0; i < Cameras.Count; ++i)
 			{
-				T comp = hits[i].collider.gameObject.GetComponent<T>();
+				RaycastHit[] hits;
 
-				if (comp != null)
+				Camera cam = Cameras[i];
+				Ray ray = cam.ScreenPointToRay(pos);
+
+				hits = Physics.RaycastAll(ray);
+
+				for (int j = 0; j < hits.Length; ++j)
 				{
-					result.Add(comp);
+					T comp = hits[j].collider.gameObject.GetComponent<T>();
+
+					if (comp != null)
+					{
+						result.Add(comp);
+					}
 				}
 			}
 
