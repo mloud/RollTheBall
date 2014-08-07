@@ -3,29 +3,46 @@ using System.Collections;
 
 public class Rotator : Manipulator 
 {
+	[SerializeField]
+	float speed = 200.0f;
+
 
 	[SerializeField]
-	Vector3 OnClickRotation;
+	RotationAround RotateAround;
 
-	private Vector3? RotateAround;
-	float angleToRotate;
+	public enum RotationAround
+	{
+		x = 0,
+		y, 
+		z
+	}
+
+	[SerializeField]
+	float OnClickRotation;
+
+	private Vector3 axeToRotate;
+	private float angleToRotate;
+
+
 
 	void Update ()
 	{
-		if (RotateAround != null)
+		if (Running)
 		{
-			float angle = Time.deltaTime * 60.0f * Mathf.Sign(angleToRotate);
+			float angle = Time.deltaTime * speed * Mathf.Sign(angleToRotate);
 
 			if (Mathf.Abs(angleToRotate) >= Mathf.Abs(angle))
 			{
-				transform.parent.RotateAround(transformToManipulate.position,  RotateAround.Value, angle);
+				transform.parent.RotateAround(transformToManipulate.position,  axeToRotate, angle);
 				angleToRotate -= angle;
 			}
 			else
 			{
 				angle = angleToRotate;
-				transform.parent.RotateAround(transformToManipulate.position,  RotateAround.Value, angle);
-				RotateAround = null;
+				transform.parent.RotateAround(transformToManipulate.position,  axeToRotate, angle);
+				Running = false;
+
+				OnClickRotation *= -1;
 			}
 
 
@@ -35,26 +52,20 @@ public class Rotator : Manipulator
 	
 	public override void Manipulate()
 	{
-		if (OnClickRotation.x != 0)
+		if (RotateAround == RotationAround.x)
 		{
-			//transform.parent.RotateAround(transform.position,  new Vector3(1,0,0), OnClickRotation.x);
-			RotateAround = new Vector3(1,0,0);
-			angleToRotate = OnClickRotation.x;
+			axeToRotate = new Vector3(1,0,0);
 		}
-
-		if (OnClickRotation.y != 0)
+		else if (RotateAround == RotationAround.y)
 		{
-			//transform.parent.RotateAround(transform.position, new Vector3(0,1,0), OnClickRotation.y);
-			RotateAround = new Vector3(0,1,0);
-			angleToRotate = OnClickRotation.y;
+			axeToRotate = new Vector3(0,1,0);
 		}
-
-		if (OnClickRotation.z != 0)
+		else if (RotateAround == RotationAround.z)
 		{
-			//transform.parent.RotateAround(transform.position, new Vector3(0,0,1), OnClickRotation.z);
-			RotateAround = new Vector3(0,0,1);
-			angleToRotate = OnClickRotation.z;
+			axeToRotate = new Vector3(0,0,1);
 		}
+		Running = true;
+		angleToRotate = OnClickRotation;
 	}
 
 }
