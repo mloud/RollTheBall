@@ -153,11 +153,16 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	
 	public void TouchEnded(UI.Touch touch)
 	{
-
+		List<Box> boxes = UI.TouchManager.Instance.GetGameObjectsAt<Box>(touch.Position);
+		if (boxes.Count > 0)
+		{
+			boxes[0].ParentSegment.OnTouch();
+		}
+		
 		if (_touchZone != Zone.None)
 		{
-		
-		
+
+
 		}
 
 		_rotateBy = null;

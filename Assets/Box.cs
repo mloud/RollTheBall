@@ -8,6 +8,13 @@ public class Box : MonoBehaviour
 	Box[] boxes;
 #endif
 
+	public Segment ParentSegment {get; private set;}
+
+	void Start()
+	{
+		ParentSegment = transform.parent.GetComponent<Segment>();
+	}
+
 
 #if UNITY_EDITOR
 	void OnDrawGizmos()

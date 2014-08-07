@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class Segment : MonoBehaviour
 {
-
 	public List<Connector> Connectors 
 	{
 		get { 
@@ -19,18 +18,19 @@ public class Segment : MonoBehaviour
 	}
 
 
-	private List<GameObject> PipeList { get; set; }
-
 	public List<Waypoint> Waypoints { get; set; }
 
-
+	private List<GameObject> PipeList { get; set; }
+	private List<Manipulator> Manipulators { get; set; }
 	private List<Connector> _connectors;
+
 
 	private void Awake()
 	{
 		MakeListOfPipes();
 		MakeListOfConnectors();
 		MakeListOfWaypoints();
+		MakeListOfManipulators();
 	}
 
 	// Creates list of all pipes in segment
@@ -66,7 +66,13 @@ public class Segment : MonoBehaviour
 		}
 	}
 
+	private void MakeListOfManipulators()
+	{
+		Manipulators = new List<Manipulator>(transform.GetComponentsInChildren<Manipulator>());
+	}
 
+
+		
 	public List<Connector> GetSortedConnectors(Vector3 pos)
 	{
 		List<Connector> sortedConnectors = new List<Connector>(Connectors);
@@ -103,5 +109,19 @@ public class Segment : MonoBehaviour
 			PipeList[i].gameObject.renderer.material.color = highlight ? Color.red :  Color.white;
 		}
 	}
+
+	void Update()
+	{
+
+	}
+
+	public void OnTouch()
+	{
+		for (int i = 0; i < Manipulators.Count; ++i)
+		{
+			Manipulators[i].Manipulate();
+		}
+	}
+
 
 }
