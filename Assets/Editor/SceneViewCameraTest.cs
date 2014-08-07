@@ -22,6 +22,7 @@ public class SceneViewCameraTest : ScriptableObject
 
 			if (sw != null)
 			{
+			
 				sw.name = "Scene View " + i.ToString();
 				sw.title = "Scene View " + i.ToString();
 
@@ -29,12 +30,16 @@ public class SceneViewCameraTest : ScriptableObject
 				target.transform.position = gameCamera.transform.position;
 				target.transform.rotation = gameCamera.transform.rotation;
 
+
 				target.transform.RotateAround(root.position, Vector3.up, -i * 90.0f);
 
 
 				sw.AlignViewToObject(target.transform);
 				GameObject.DestroyImmediate(target);
 	
+				sw.camera.orthographicSize = gameCamera.orthographicSize;
+				sw.camera.aspect = gameCamera.aspect;
+
 			
 
 				Debug.Log ("Camera set in SceneView " + i.ToString());

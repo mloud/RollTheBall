@@ -1,17 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class SceneController : UI.ITouchListener, UI.IObjectHitListener
-#if UNITY_EDITOR
-, UI.IKeyPressedListener
-#endif
 {
 	public enum RotDirection
 	{
-		Left, 
-		Right,
-		Up,
-		Down
+		X, 
+		Y,
+		Z
 	}
 
 
@@ -19,12 +16,13 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	{
 		Bottom, 
 		Right,
+		Left,
 		None
 	}
 	
 	public Transform RootPoint { get; set; }
 	
-	
+
 	private Vector3 _initialRotation;
 	private UI.Touch? _touchBegan;
 	private Zone _touchZone;
@@ -36,25 +34,19 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	private Vector3? _rotateBy;
 	private int _rotateBySteps;
 
+
+	private const int ROTATION_ANGLE = 90;
+
 	public SceneController()
 	{
 		UI.TouchManager.Instance.Register(this);
 		UI.TouchManager.Instance.RegisterObjectHitListener(this);
-
-#if UNITY_EDITOR
-		UI.TouchManager.Instance.RegisterKeyListener(this);
-#endif
 	}
 	
 	public void Release()
 	{
 		UI.TouchManager.Instance.Unregister(this);
 		UI.TouchManager.Instance.UntegisterObjectHitListener(this);
-
-	
-#if UNITY_EDITOR
-		UI.TouchManager.Instance.UnregisterKeyListener(this);
-#endif
 	}
 
 
@@ -104,15 +96,41 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	private Zone ResolveTouchZone(Vector3 pos)
 	{
 		Zone zone = Zone.None;
+
+		Camera cam = MUI.Instance.UICamera;
+		Ray ray = cam.ScreenPointToRay(pos);
 		
-		if (pos.y < Utils.ScreenSize().y * Settings.Instance.BottomReactionArea)
+		var hits = Physics.RaycastAll(ray);
+		
+		if (Array.FindIndex(hits, x=>x.collider.gameObject.name == "RotationBottom") != -1)
 		{
 			zone = Zone.Bottom;
 		}
-		else if (pos.x > Utils.ScreenSize().x * (1 - Settings.Instance.RightReactionArea))
+		else if (Array.FindIndex(hits, x=>x.collider.gameObject.name == "RotationLeft") != -1)
 		{
-			zone  = Zone.Right;
+			zone = Zone.Left;
 		}
+		else if (Array.FindIndex(hits, x=>x.collider.gameObject.name == "RotationRight") != -1)
+		{
+			zone = Zone.Right;
+		}
+		else
+		{
+			zone = Zone.None;
+		}
+//
+//		if (pos.y < Utils.ScreenSize().y * Settings.Instance.BottomReactionArea)
+//		{
+//			zone = Zone.Bottom;
+//		}
+//		else if (pos.x > Utils.ScreenSize().x * (1 - Settings.Instance.RightReactionArea))
+//		{
+//			zone  = Zone.Left;
+//		}
+//		else if (pos.x < Utils.ScreenSize().x * Settings.Instance.RightReactionArea)
+//		{
+//			zone = Zone.Right;
+//		}
 		
 		return zone;
 		
@@ -127,18 +145,29 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 			_touchBegan = touch;
 			
 			_touchZone = ResolveTouchZone(touch.Position);
+
+			Debug.Log ("SceneController.TouchBegan: zone: "  + _touchZone.ToString());
 		}
 	}
 	
 	
 	public void TouchEnded(UI.Touch touch)
 	{
+
+		if (_touchZone != Zone.None)
+		{
+		
+		
+		}
+
+		_rotateBy = null;
+		_touchZone = Zone.None;
 		_touchBegan = null;
 	}
 	
 	public void TouchMoved(UI.Touch touch)
 	{
-		return; // !!!
+	
 		if (_touchZone != Zone.None)
 		{
 			Vector3 touchBeginEndVec = touch.Position - _touchBegan.Value.Position;
@@ -147,13 +176,21 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 			
 			if (_touchZone == Zone.Bottom)
 			{
-				rotation.y = touchBeginEndVec.x * 0.2f;
+				rotation.y = touchBeginEndVec.x * 0.4f;
 			}
 			else if (_touchZone == Zone.Right)
 			{
-				rotation.x = touchBeginEndVec.y * 0.2f;
+				rotation.x = touchBeginEndVec.y * 0.4f;
 			}
-			
+			else if (_touchZone == Zone.Left)
+			{
+				rotation.z = touchBeginEndVec.y * 0.4f;
+			}
+
+			rotation.x = Math.Sign(rotation.x) * Math.Min (ROTATION_ANGLE, Mathf.Abs(rotation.x));
+			rotation.y = Math.Sign(rotation.y) * Math.Min (ROTATION_ANGLE, Mathf.Abs(rotation.y));
+			rotation.z = Math.Sign(rotation.z) * Math.Min (ROTATION_ANGLE, Mathf.Abs(rotation.z));
+
 			RootPoint.transform.eulerAngles = _initialRotation + rotation;
 		}
 	}
@@ -163,44 +200,49 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	{
 		if (obj.name == "BtnArrLeft")
 		{
-			Rotate(SceneController.RotDirection.Left);
+			Rotate(SceneController.RotDirection.Y, ROTATION_ANGLE);
 		}
 		else if (obj.name == "BtnArrRight")
 		{
-			Rotate(SceneController.RotDirection.Right);
+			Rotate(SceneController.RotDirection.Y, -ROTATION_ANGLE);
 		}
-		else if (obj.name == "BtnArrUp")
+		else if (obj.name == "BtnArrUpLeft")
 		{
-			Rotate(SceneController.RotDirection.Up);
+			Rotate(SceneController.RotDirection.X, ROTATION_ANGLE);
 		}
-		else if (obj.name == "BtnArrDown")
+		else if (obj.name == "BtnArrDownLeft")
 		{
-			Rotate(SceneController.RotDirection.Down);
+			Rotate(SceneController.RotDirection.X, -ROTATION_ANGLE);
+		}
+		else if (obj.name == "BtnArrUpRight")
+		{
+			Rotate(SceneController.RotDirection.Z, ROTATION_ANGLE);
+		}
+		else if (obj.name == "BtnArrDownRight")
+		{
+			Rotate(SceneController.RotDirection.Z, -ROTATION_ANGLE);
 		}
 	}
 
-	public void Rotate(RotDirection dir)
+	private void Rotate(RotDirection dir, float angle)
 	{
 		if (_rotateBy == null)
 		{
+			_dstRotation = new Vector3(angle, 0, 0);
+
 			switch(dir)
 			{
-			case RotDirection.Down:
-				_dstRotation = new Vector3(-90,0,0);
+			case RotDirection.X:
+				_dstRotation = new Vector3(angle, 0, 0);
 				break;
 
-			case RotDirection.Up:
-				_dstRotation = new Vector3(90,0,0);
+			case RotDirection.Y:
+				_dstRotation = new Vector3(0, angle, 0);
 				break;
 
-			case RotDirection.Left:
-				_dstRotation = new Vector3(0,90,0);
+			case RotDirection.Z:
+				_dstRotation = new Vector3(0, 0, angle);
 				break;
-
-			case RotDirection.Right:
-				_dstRotation = new Vector3(0,-90,0);
-				break;
-
 			}
 		
 			_rotateBySteps = 10;
@@ -208,38 +250,4 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 		}
 	}
 
-#if UNITY_EDITOR
-	public void KeyPressed(KeyCode keyCode)
-	{
-		// ignore of rotation in progress
-		if (_dstRotation != null && _rotateBy != null)
-			return;
-
-
-		if (keyCode == KeyCode.LeftArrow)
-		{
-			_dstRotation = new Vector3(0,90,0);
-		}
-		else if (keyCode == KeyCode.RightArrow)
-		{
-			_dstRotation = new Vector3(0,-90,0);
-		}
-		else if (keyCode == KeyCode.UpArrow)
-		{
-			_dstRotation = new Vector3(90,0,0);
-		}
-		else if (keyCode == KeyCode.DownArrow)
-		{
-			_dstRotation = new Vector3(-90,0,0);
-		}
-
-		_actualRotation = Vector3.zero;
-		_initialRotation = RootPoint.transform.eulerAngles;
-
-
-		_rotateBySteps = 10;
-		_rotateBy = _dstRotation / _rotateBySteps;
-	}
-#endif
-	
 }

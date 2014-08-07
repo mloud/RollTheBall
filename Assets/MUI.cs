@@ -3,6 +3,8 @@ using System.Collections;
 
 public class MUI : MonoBehaviour
 {
+	[SerializeField]
+	public Camera UICamera;
 
 	[SerializeField]
 	GameObject finish;
