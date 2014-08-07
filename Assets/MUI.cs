@@ -21,6 +21,10 @@ public class MUI : MonoBehaviour
 	public void ShowFinishGame()
 	{
 		GameObject finishGo = Instantiate(finish) as GameObject;
+
+		finishGo.transform.parent = transform;
+		finishGo.transform.localEulerAngles = Vector3.zero;
+		finishGo.transform.localPosition = Vector3.zero;
 	}
 
 
