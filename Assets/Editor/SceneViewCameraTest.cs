@@ -3,11 +3,19 @@ using UnityEditor;
  
 public class SceneViewCameraTest : ScriptableObject
 {
-    [MenuItem("MultiCamera/SetToGameCamera")]
-    static public void MoveSceneViewCamera()
+    [MenuItem("MultiCamera/SetEditorCameras")]
+    static public void SetCameras()
     {
-		// Get GameCamera 
-		Camera gameCamera = (Camera)Object.FindObjectOfType(typeof(Camera));
+
+		// Get all Cameras 
+		Camera[] cameras = GameObject.FindObjectsOfType<Camera>();
+	
+		// Find GameCamera
+		Camera gameCamera = ArrayUtility.Find(cameras, x=>x.tag == "MainCamera");
+
+
+		GameObject editorGameObject = GameObject.Find("Editor");
+
 		Transform root = GameObject.Find("Root").transform;
 
 		Debug.Log ("GameCamera");
@@ -27,26 +35,60 @@ public class SceneViewCameraTest : ScriptableObject
 				sw.title = "Scene View " + i.ToString();
 
 				GameObject target = new GameObject();
+
+				target.transform.parent = editorGameObject.transform;
+
+
 				target.transform.position = gameCamera.transform.position;
 				target.transform.rotation = gameCamera.transform.rotation;
-
-
 				target.transform.RotateAround(root.position, Vector3.up, -i * 90.0f);
 
-
 				sw.AlignViewToObject(target.transform);
-				GameObject.DestroyImmediate(target);
-	
+			
 				sw.camera.orthographicSize = gameCamera.orthographicSize;
 				sw.camera.aspect = gameCamera.aspect;
 
+
+				bool destroyDummyGo = true;
+
+				// create special Scene view Camera
+				if (editorGameObject != null)
+				{
+					//Find Scene View Cameras
+					Camera sceneViewCamera = ArrayUtility.Find(cameras, x=>x.name == ("SceneCamera_" + i.ToString()));
 			
+					// doesn't exist -> create
+					if (sceneViewCamera == null)
+					{
+						destroyDummyGo = false; // keep game object and attach SceneViewCamera
+						target.name = "SceneCamera_" + i;
+
+						sceneViewCamera = target.AddComponent<Camera>();
+						CopyCamareSettings(gameCamera, sceneViewCamera);
+					}
+				}
+			
+
+				if (destroyDummyGo)
+				{
+					GameObject.DestroyImmediate(target);
+				}
 
 				Debug.Log ("Camera set in SceneView " + i.ToString());
 			}
 		
 		}
 	}
+
+	private static void CopyCamareSettings(Camera camFrom, Camera camTo)
+	{
+		camTo.isOrthoGraphic = camFrom.isOrthoGraphic;
+		camTo.nearClipPlane = camFrom.nearClipPlane;
+		camTo.orthographicSize = camFrom.orthographicSize;
+		camTo.aspect = camFrom.aspect;
+		camTo.depth = camFrom.depth;
+	}
+
 
 	[MenuItem("MultiCamera/ResetRotationToDefault")]
 	static public void resetToDefault()
