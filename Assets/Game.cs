@@ -103,8 +103,12 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		return null;
 	}
 
-	public Segment GetConnectedSegment(Connector connector)
+	public List<Connector> GetConnectedSegments(Connector connector)
 	{
+		List<Connector> connectedConnectors = new List<Connector>();
+
+		Vector3 pos2 = Camera.main.WorldToScreenPoint(connector.transform.position);
+
 		for (int i = 0; i < Segments.Count; ++i)
 		{
 			if (Segments[i]  != connector.Segment)
@@ -117,18 +121,18 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 					{
 						//project points to screenspace - if in touch, they are connected
 						Vector3 pos1 = Camera.main.WorldToScreenPoint(otherConn.transform.position);
-						Vector3 pos2 = Camera.main.WorldToScreenPoint(connector.transform.position);
+					
 						
 						if ( (pos1 - pos2).magnitude < SegmentConnectedDistance)
 						{
-							return Segments[i];
+							connectedConnectors.Add(otherConn);
 						}
 					}
 				}
 			}
 		}
 
-		return null;
+		return connectedConnectors;
 	}
 
 

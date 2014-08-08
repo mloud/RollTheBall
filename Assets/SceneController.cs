@@ -153,12 +153,23 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	
 	public void TouchEnded(UI.Touch touch)
 	{
-		List<Box> boxes = UI.TouchManager.Instance.GetGameObjectsAt<Box>(touch.Position);
-		if (boxes.Count > 0)
+
+		List<CrossRoadArrow> crossRoadArrows = UI.TouchManager.Instance.GetGameObjectsAt<CrossRoadArrow>(touch.Position);
+		if (crossRoadArrows.Count > 0)
 		{
-			boxes[0].ParentSegment.OnTouch();
+			crossRoadArrows[0].CrossRoad.SwitchSegment();
 		}
-		
+		else
+		{
+			List<Box> boxes = UI.TouchManager.Instance.GetGameObjectsAt<Box>(touch.Position);
+			if (boxes.Count > 0)
+			{
+				boxes[0].ParentSegment.OnTouch();
+			}
+		}
+
+
+
 		if (_touchZone != Zone.None)
 		{
 

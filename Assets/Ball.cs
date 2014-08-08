@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class Ball : MonoBehaviour
 {
 	[SerializeField]
+	GameObject crossRoadPrefab;
+
+	[SerializeField]
 	float speed;
 
 	private const float DESTINATION_TRESHOLD = 0.01f;
@@ -17,6 +20,8 @@ public class Ball : MonoBehaviour
 
 	private JumpState Jump { get; set; }
 
+	private CrossRoad CrossRoad { get; set; }
+
 	class JumpState
 	{
 		public Waypoint DestinationWaypoint;
@@ -28,7 +33,8 @@ public class Ball : MonoBehaviour
 	{
 		Static,
 		Moving,
-		Jumping
+		Jumping,
+		WaitingCrossRoad
 	}
 
 	public State CurrentState { get; set; }
@@ -58,6 +64,10 @@ public class Ball : MonoBehaviour
 		case State.Jumping:
 			UpdateJumping();
 			break;
+
+		case State.WaitingCrossRoad:
+			UpdateWaitingCrossRoad();
+			break;
 		}
 	}
 
@@ -69,14 +79,18 @@ public class Ball : MonoBehaviour
 	
 		Debug.Log ("Ball.OnEndSegmentReached() - nearest connector " + nearestConnectors[0].name);
 
-		Segment connectedSegment = Game.Instance.GetConnectedSegment(nearestConnectors[0]);
+		List<Connector> connectedConnectors = Game.Instance.GetConnectedSegments(nearestConnectors[0]);
 
 
-		//Segment connectedSegment = Game.Instance.FindConnectedSegment(nearestConnectors[0], CurrentSegment);
-
-		if (connectedSegment != null)
+		// just one segment connected
+		if (connectedConnectors.Count == 1)
 		{
-			JumpToSegment(connectedSegment);
+			JumpToSegment(connectedConnectors[0].Segment);
+		}
+		// Make joice which segment
+		else if (connectedConnectors.Count > 1)
+		{
+			WaitAtCrossRoad(connectedConnectors);
 		}
 	}
 
@@ -145,6 +159,11 @@ public class Ball : MonoBehaviour
 		}
 	}
 
+	void UpdateWaitingCrossRoad()
+	{
+
+	}
+
 	void JumpToSegment(Segment segment)
 	{
 		Debug.Log("Ball.JumpToSegment() " + segment.name);
@@ -199,17 +218,36 @@ public class Ball : MonoBehaviour
 		}
 	}
 
+	void WaitAtCrossRoad(List<Connector> segments)
+	{
+		CurrentState = State.WaitingCrossRoad;
+
+		GameObject crossRoadGo = Instantiate(crossRoadPrefab) as GameObject;
+		CrossRoad = crossRoadGo.GetComponent<CrossRoad>();
+
+		CrossRoad.Init(segments);
+	}
+
 	void OnMouseDown()
 	{
 		if (CurrentSegment != null)
 		{
-			// try jump to other segment first
-			OnEndSegmentReached();
-
-			if (CurrentState != State.Jumping)
+			if (CrossRoad != null)
 			{
+				JumpToSegment(CrossRoad.GetCurrentConnector().Segment);
 
-				MoveFromWaypoint();
+				Destroy(CrossRoad.gameObject);
+			}
+			else
+			{
+				// try jump to other segment first
+				OnEndSegmentReached();
+
+				if (CurrentState != State.Jumping)
+				{
+
+					MoveFromWaypoint();
+				}
 			}
 		}
 	}
