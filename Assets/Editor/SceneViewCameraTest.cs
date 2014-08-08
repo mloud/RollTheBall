@@ -3,6 +3,21 @@ using UnityEditor;
  
 public class SceneViewCameraTest : ScriptableObject
 {
+	[MenuItem("MultiCamera/AddEditor")]
+	static public void AddEditor()
+	{
+		GameObject editorGameObject = GameObject.Find("Editor");
+
+		if (editorGameObject == null)
+		{
+			GameObject editorPrefab = Resources.Load("Editor") as GameObject;
+
+			GameObject editorGo = Instantiate(editorPrefab) as GameObject;
+			editorGo.name = "Editor";
+		}
+	}
+
+
 	[MenuItem("MultiCamera/SetCamerasForXRotation ")]
 	static public void SetCamerasForXRotation()
 	{
@@ -34,7 +49,10 @@ public class SceneViewCameraTest : ScriptableObject
 		Camera gameCamera = ArrayUtility.Find(cameras, x=>x.tag == "MainCamera");
 
 
+		AddEditor();
+
 		GameObject editorGameObject = GameObject.Find("Editor");
+
 
 		Transform root = GameObject.Find("Root").transform;
 
