@@ -7,23 +7,8 @@ public class Rotator : Manipulator
 	float speed = 200.0f;
 
 
-	[SerializeField]
-	RotationAround RotateAround;
-
-	public enum RotationAround
-	{
-		x = 0,
-		y, 
-		z
-	}
-
-	[SerializeField]
-	float OnClickRotation;
-
 	private Vector3 axeToRotate;
 	private float angleToRotate;
-
-
 
 	void Update ()
 	{
@@ -42,10 +27,8 @@ public class Rotator : Manipulator
 				transform.parent.RotateAround(transformToManipulate.position,  axeToRotate, angle);
 				Running = false;
 
-				OnClickRotation *= -1;
+				Value *= -1;
 			}
-
-
 		}
 	}
 
@@ -55,20 +38,12 @@ public class Rotator : Manipulator
 		if (!Running)
 		{
 
-			if (RotateAround == RotationAround.x)
-			{
-				axeToRotate = new Vector3(1,0,0);
-			}
-			else if (RotateAround == RotationAround.y)
-			{
-				axeToRotate = new Vector3(0,1,0);
-			}
-			else if (RotateAround == RotationAround.z)
-			{
-				axeToRotate = new Vector3(0,0,1);
-			}
+			axeToRotate = new Vector3(ActiveAxe == Axe.x ? 1 : 0,
+			                          ActiveAxe == Axe.y ? 1 : 0,
+			                          ActiveAxe == Axe.z ? 1 : 0);
+
 			Running = true;
-			angleToRotate = OnClickRotation;
+			angleToRotate = Value;
 		}
 	}
 
