@@ -3,8 +3,28 @@ using UnityEditor;
  
 public class SceneViewCameraTest : ScriptableObject
 {
-    [MenuItem("MultiCamera/SetEditorCameras")]
-    static public void SetCameras()
+	[MenuItem("MultiCamera/SetCamerasForXRotation ")]
+	static public void SetCamerasForXRotation()
+	{
+		SetCameras(new Vector3(1,0,0));
+	}
+
+	[MenuItem("MultiCamera/SetCamerasForYRotation ")]
+	static public void SetCamerasForYRotation()
+	{
+		SetCameras(new Vector3(0,1,0));
+	}
+
+	[MenuItem("MultiCamera/SetCamerasForZRotation ")]
+	static public void SetCamerasForZRotation()
+	{
+		SetCameras(new Vector3(0,0,1));
+	}
+
+
+
+
+    static private void SetCameras(Vector3 rotationVector)
     {
 
 		// Get all Cameras 
@@ -28,7 +48,7 @@ public class SceneViewCameraTest : ScriptableObject
 		{
 			SceneView sw = SceneView.sceneViews[i] as SceneView;
 
-			if (sw != null)
+			if (sw != null && sw.camera != null)
 			{
 			
 				sw.name = "Scene View " + i.ToString();
@@ -41,13 +61,11 @@ public class SceneViewCameraTest : ScriptableObject
 
 				target.transform.position = gameCamera.transform.position;
 				target.transform.rotation = gameCamera.transform.rotation;
-				target.transform.RotateAround(root.position, Vector3.up, -i * 90.0f);
+				target.transform.RotateAround(root.position, rotationVector, -i * 90.0f);
 
 				sw.AlignViewToObject(target.transform);
-			
-				sw.camera.orthographicSize = gameCamera.orthographicSize;
-				sw.camera.aspect = gameCamera.aspect;
 
+				CopyCamareSettings(gameCamera, sw.camera);
 
 				bool destroyDummyGo = true;
 
@@ -64,8 +82,8 @@ public class SceneViewCameraTest : ScriptableObject
 						target.name = "SceneCamera_" + i;
 
 						sceneViewCamera = target.AddComponent<Camera>();
-						CopyCamareSettings(gameCamera, sceneViewCamera);
 					}
+					CopyCamareSettings(gameCamera, sceneViewCamera);
 				}
 			
 
@@ -84,48 +102,11 @@ public class SceneViewCameraTest : ScriptableObject
 	{
 		camTo.isOrthoGraphic = camFrom.isOrthoGraphic;
 		camTo.nearClipPlane = camFrom.nearClipPlane;
+		camTo.farClipPlane = camFrom.farClipPlane;
 		camTo.orthographicSize = camFrom.orthographicSize;
 		camTo.aspect = camFrom.aspect;
 		camTo.depth = camFrom.depth;
 	}
-
-
-	[MenuItem("MultiCamera/ResetRotationToDefault")]
-	static public void resetToDefault()
-	{
-		Transform root = GameObject.Find("Root").transform;
-		root.localEulerAngles = new Vector3 (135, 45, 0);
-	}
-
-	[MenuItem("MultiCamera/RotateRight")]
-	static public void rotateRight()
-	{
-		Transform root = GameObject.Find("Root").transform;
-		root.Rotate(new Vector3(0, 90, 0), Space.World);
-	}
-
-	[MenuItem("MultiCamera/RotateLeft")]
-	static public void rotateLeft()
-	{
-		Transform root = GameObject.Find("Root").transform;
-		root.Rotate(new Vector3(0, -90, 0), Space.World);
-	}
-
-	[MenuItem("MultiCamera/RotateUp")]
-	static public void rotateUp()
-	{
-		Transform root = GameObject.Find("Root").transform;
-		root.Rotate(new Vector3(90, 0, 0), Space.World);
-	}
-	
-	[MenuItem("MultiCamera/RotateDown")]
-	static public void rotateDown()
-	{
-		Transform root = GameObject.Find("Root").transform;
-		root.Rotate(new Vector3(-90, 0, 0), Space.World);
-	}
-
-
 
 
 
