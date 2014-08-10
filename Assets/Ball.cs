@@ -76,10 +76,12 @@ public class Ball : MonoBehaviour
 		Debug.Log("Ball.OnEndSegmentReached() " + CurrentSegment.name);
 
 		List<Connector> nearestConnectors = CurrentSegment.GetSortedConnectors(transform.position);
-	
-		Debug.Log ("Ball.OnEndSegmentReached() - nearest connector " + nearestConnectors[0].name);
 
-		List<Connector> connectedConnectors = Game.Instance.GetConnectedSegments(nearestConnectors[0]);
+		Connector nearestConnectorOnSegment = nearestConnectors[0];
+
+		Debug.Log ("Ball.OnEndSegmentReached() - nearest connector " + nearestConnectorOnSegment.name);
+
+		List<Connector> connectedConnectors = Game.Instance.GetConnectedSegments(nearestConnectorOnSegment);
 
 
 		// just one segment connected
@@ -90,7 +92,7 @@ public class Ball : MonoBehaviour
 		// Make joice which segment
 		else if (connectedConnectors.Count > 1)
 		{
-			WaitAtCrossRoad(connectedConnectors);
+			WaitAtCrossRoad(nearestConnectorOnSegment, connectedConnectors);
 		}
 	}
 
@@ -218,14 +220,14 @@ public class Ball : MonoBehaviour
 		}
 	}
 
-	void WaitAtCrossRoad(List<Connector> segments)
+	void WaitAtCrossRoad(Connector nearestConnectorOnSegment, List<Connector> segments)
 	{
 		CurrentState = State.WaitingCrossRoad;
 
 		GameObject crossRoadGo = Instantiate(crossRoadPrefab) as GameObject;
 		CrossRoad = crossRoadGo.GetComponent<CrossRoad>();
 
-		CrossRoad.Init(segments);
+		CrossRoad.Init(nearestConnectorOnSegment);
 	}
 
 	void OnMouseDown()
@@ -234,7 +236,7 @@ public class Ball : MonoBehaviour
 		{
 			if (CrossRoad != null)
 			{
-				JumpToSegment(CrossRoad.GetCurrentConnector().Segment);
+				JumpToSegment(CrossRoad.CurrentConnector.Segment);
 
 				Destroy(CrossRoad.gameObject);
 			}

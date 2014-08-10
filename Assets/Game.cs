@@ -22,6 +22,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	float SegmentConnectedDistance;
 
 
+
 	public static Game Instance { get { return _instance; }}
 
 	private static Game _instance;
@@ -77,7 +78,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		{
 			for (int j = i + 1; j < Segments.Count; ++j)
 			{
-				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j], SegmentConnectedDistance) != null)
+				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j]) != null)
 				{
 					Segments[i].Highlight(true);
 					Segments[j].Highlight(true);
@@ -93,7 +94,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		{
 			if (Segments[i] != inputSegment)
 			{
-				if (Utils.IsSegmentConnected(Camera.main, inputSegment, Segments[i], SegmentConnectedDistance, inputSegConnector, null) != null)
+				if (Utils.IsSegmentConnected(Camera.main, inputSegment, Segments[i], inputSegConnector, null) != null)
 				{
 					return Segments[i];
 				}
