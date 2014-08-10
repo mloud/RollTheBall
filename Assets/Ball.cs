@@ -256,9 +256,20 @@ public class Ball : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
-		if (other.gameObject.GetComponent<Finish>() != null)
+		if (other.collider.gameObject.GetComponent<Finish>() != null)
+		//if (other.collider.gameObject.tag == "Finish")
 		{
-			MUI.Instance.ShowFinishGame();
+			Game.Instance.GameFinished();
+		}
+		else
+		{
+			Bonus bonus = other.collider.gameObject.GetComponent<Bonus>();
+			//else if (other.collider.gameObject.tag == "Bonus")
+
+			if (bonus != null)
+			{
+				Game.Instance.CollectBonus(other.collider.gameObject.GetComponent<Bonus>());
+			}
 		}
 
 	}

@@ -8,6 +8,7 @@ public class Editor : MonoBehaviour
 #if UNITY_EDITOR
 	void OnDrawGizmos()
 	{
+
 		Segment[] segments = GameObject.FindObjectsOfType<Segment>();
 
 		Gizmos.color = Color.green;
@@ -22,7 +23,7 @@ public class Editor : MonoBehaviour
 
 					if (sw != null)
 					{
-						Utils.SegmentConnection segConn = Utils.IsSegmentConnected(sw.camera, segments[i], segments[j], 20);
+						Utils.SegmentConnection segConn = Utils.IsSegmentConnected(sw.camera, segments[i], segments[j]);
 
 						if (segConn != null)
 						{

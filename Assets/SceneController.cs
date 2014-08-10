@@ -244,6 +244,8 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	{
 		if (_rotateBy == null)
 		{
+			Game.Instance.PlayerStatus.Moves++;
+
 			_dstRotation = new Vector3(angle, 0, 0);
 
 			switch(dir)
