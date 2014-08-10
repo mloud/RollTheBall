@@ -82,6 +82,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	public void GameFinished()
 	{
 		CurrentState = State.Finished;
+		MUI.Instance.HideArrows();
 		MUI.Instance.ShowFinishGame();
 	}
 
