@@ -75,6 +75,7 @@ public class Segment : MonoBehaviour
 		{
 			GameObject copy = Instantiate(boxes[i].gameObject, boxes[i].transform.position, boxes[i].transform.rotation) as GameObject;
 			copy.transform.parent =  boxes[i].transform.parent;
+			copy.transform.localScale = boxes[i].transform.localScale;
 			
 			OrthoVisual orthoVis = new OrthoVisual();
 			orthoVis.origTransform = boxes[i].gameObject.transform;
