@@ -8,29 +8,33 @@ public class Editor : MonoBehaviour
 #if UNITY_EDITOR
 	void OnDrawGizmos()
 	{
-		Segment[] segments = GameObject.FindObjectsOfType<Segment>();
-
-		Gizmos.color = Color.green;
-		for (int i = 0; i < segments.Length; ++i)
+		if (!Application.isPlaying)
 		{
-			for (int j = i + 1; j < segments.Length; ++j)
+
+			Segment[] segments = GameObject.FindObjectsOfType<Segment>();
+
+			Gizmos.color = Color.green;
+			for (int i = 0; i < segments.Length; ++i)
 			{
-
-				for (int k = 0; k < SceneView.sceneViews.Count; ++k)
+				for (int j = i + 1; j < segments.Length; ++j)
 				{
-					SceneView sw = SceneView.sceneViews[k] as SceneView;
 
-					if (sw != null)
+					for (int k = 0; k < SceneView.sceneViews.Count; ++k)
 					{
-						Utils.SegmentConnection segConn = Utils.IsSegmentConnected(sw.camera, segments[i], segments[j], 20);
+						SceneView sw = SceneView.sceneViews[k] as SceneView;
 
-						if (segConn != null)
+						if (sw != null)
 						{
-							Gizmos.DrawSphere(segConn.Conn1.transform.position, 0.3f);
-							Gizmos.DrawSphere(segConn.Conn2.transform.position, 0.3f);
+							Utils.SegmentConnection segConn = Utils.IsSegmentConnected(sw.camera, segments[i], segments[j]);
+
+							if (segConn != null)
+							{
+								Gizmos.DrawSphere(segConn.Conn1.transform.position, 0.3f);
+								Gizmos.DrawSphere(segConn.Conn2.transform.position, 0.3f);
+							}
 						}
+						
 					}
-					
 				}
 			}
 		}

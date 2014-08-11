@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class MUI : MonoBehaviour
 {
@@ -8,6 +8,10 @@ public class MUI : MonoBehaviour
 
 	[SerializeField]
 	GameObject finish;
+
+	[SerializeField]
+	List<GameObject> Arrows;
+
 
 	public static MUI Instance { get { return _instance; }}
 	
@@ -26,6 +30,15 @@ public class MUI : MonoBehaviour
 		finishGo.transform.localEulerAngles = Vector3.zero;
 		finishGo.transform.localPosition = Vector3.zero;
 	}
+
+	public void HideArrows()
+	{
+		for (int i = 0; i < Arrows.Count; ++i)
+		{
+			Arrows[i].gameObject.SetActive(false);
+		}
+	}
+
 
 
 }

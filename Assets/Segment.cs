@@ -119,6 +119,7 @@ public class Segment : MonoBehaviour
 	{
 		for (int i = 0; i < Manipulators.Count; ++i)
 		{
+			Game.Instance.PlayerStatus.Moves++;
 			Manipulators[i].Manipulate();
 		}
 	}

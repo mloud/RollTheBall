@@ -100,6 +100,7 @@ public class SceneViewCameraTest : ScriptableObject
 						target.name = "SceneCamera_" + i;
 
 						sceneViewCamera = target.AddComponent<Camera>();
+						//sceneViewCamera.cullingMask = 0;
 					}
 					CopyCamareSettings(gameCamera, sceneViewCamera);
 				}
@@ -112,8 +113,10 @@ public class SceneViewCameraTest : ScriptableObject
 
 				Debug.Log ("Camera set in SceneView " + i.ToString());
 			}
-		
 		}
+
+		gameCamera.enabled = false;
+		gameCamera.enabled = true;
 	}
 
 	private static void CopyCamareSettings(Camera camFrom, Camera camTo)

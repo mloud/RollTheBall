@@ -65,7 +65,7 @@ public static class Utils
 		public Connector Conn2 { get; set; }
 	}
 
-	public static SegmentConnection IsSegmentConnected(Camera camera, Segment seg1, Segment seg2, float tresholdDistance, Connector seg1Connector = null,  Connector seg2Connector = null)
+	public static SegmentConnection IsSegmentConnected(Camera camera, Segment seg1, Segment seg2, Connector seg1Connector = null,  Connector seg2Connector = null)
 	{
 		for (int i = 0; i < seg1.Connectors.Count; ++i)
 		{
@@ -90,7 +90,7 @@ public static class Utils
 					Vector3 pos1 = camera.WorldToScreenPoint(connector1.transform.position);
 					Vector3 pos2 = camera.WorldToScreenPoint(connector2.transform.position);
 					
-					if ( (pos1 - pos2).magnitude < tresholdDistance)
+					if ( (pos1 - pos2).magnitude < Settings.tresholdDistance)
 					{
 						SegmentConnection segConn = new SegmentConnection();
 						segConn.Conn1 = connector1;
@@ -104,5 +104,18 @@ public static class Utils
 		return null;
 	}
 
+	public static bool IsConnectorsConnected(Camera camera, Connector c1, Connector c2)
+	{
+		//project points to screenspace - if in touch, they are connected
+		Vector3 pos1 = camera.WorldToScreenPoint(c1.transform.position);
+		Vector3 pos2 = camera.WorldToScreenPoint(c2.transform.position);
+		
+		if ( (pos1 - pos2).sqrMagnitude < Settings.tresholdDistance * Settings.tresholdDistance)
+		{
+			return true;
+		}
+
+		return false;
+	}
 
 }

@@ -18,9 +18,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 	[SerializeField]
 	Transform BallFinish;
 
-	[SerializeField]
-	float SegmentConnectedDistance;
-
+	public PlayerStatus PlayerStatus  { get; private set; }
 
 	public static Game Instance { get { return _instance; }}
 
@@ -30,6 +28,13 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 
 	private List<Segment> Segments { get; set; }
 
+	public enum State
+	{
+		Running,
+		Finished
+	}
+
+	public State CurrentState { get; private set; }
 
 	void Awake()
 	{
@@ -41,13 +46,15 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		UI.TouchManager.Instance.RegisterObjectHitListener(this);
 
 		Segments = new List<Segment>(Utils.FindAllDeep<Segment>(root));
+		PlayerStatus = new PlayerStatus();
 
 		SceneController = new SceneController();
 		SceneController.RootPoint = root;
 
-
 		ball.PlaceToSegment(BallStartSegment, BallStartWaypoint);
 
+		PlayerStatus.LevelStartTime = Time.time;
+		CurrentState = State.Running;
 	}
 
 	void OnDestroy()
@@ -65,43 +72,20 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		HighlightConnectedSegments();
 	}
 
-
-	public void HighlightConnectedSegments()
+	public void CollectBonus(Bonus bonus)
 	{
-		for (int i = 0; i < Segments.Count; ++i)
-		{
-			Segments[i].Highlight(false);
-		}
-		
-		for (int i = 0; i < Segments.Count; ++i)
-		{
-			for (int j = i + 1; j < Segments.Count; ++j)
-			{
-				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j], SegmentConnectedDistance) != null)
-				{
-					Segments[i].Highlight(true);
-					Segments[j].Highlight(true);
-				}
-			}
-		}
+		PlayerStatus.Bonus += 1;
+
+		bonus.FlyUp();
 	}
 
-
-	public Segment FindConnectedSegment(Connector inputSegConnector, Segment inputSegment)
+	public void GameFinished()
 	{
-		for (int i = 0; i < Segments.Count; ++i)
-		{
-			if (Segments[i] != inputSegment)
-			{
-				if (Utils.IsSegmentConnected(Camera.main, inputSegment, Segments[i], SegmentConnectedDistance, inputSegConnector, null) != null)
-				{
-					return Segments[i];
-				}
-			}
-		}
-		
-		return null;
+		CurrentState = State.Finished;
+		MUI.Instance.HideArrows();
+		MUI.Instance.ShowFinishGame();
 	}
+
 
 	public List<Connector> GetConnectedSegments(Connector connector)
 	{
@@ -123,7 +107,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 						Vector3 pos1 = Camera.main.WorldToScreenPoint(otherConn.transform.position);
 					
 						
-						if ( (pos1 - pos2).magnitude < SegmentConnectedDistance)
+						if ( (pos1 - pos2).magnitude < Settings.tresholdDistance)
 						{
 							connectedConnectors.Add(otherConn);
 						}
@@ -154,24 +138,37 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		}
 	}
 
+	private void HighlightConnectedSegments()
+	{
+		for (int i = 0; i < Segments.Count; ++i)
+		{
+			Segments[i].Highlight(false);
+		}
+		
+		for (int i = 0; i < Segments.Count; ++i)
+		{
+			for (int j = i + 1; j < Segments.Count; ++j)
+			{
+				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j]) != null)
+				{
+					Segments[i].Highlight(true);
+					Segments[j].Highlight(true);
+				}
+			}
+		}
+	}
 
-	void LoadNextLevel()
+
+	private void LoadNextLevel()
 	{
 		Application.LoadLevel(Application.loadedLevel + 1);
 	}
 
-	void Replay()
+	private void Replay()
 	{
 	
 		Application.LoadLevel(Application.loadedLevel);
 	}
-
-
-	void RestartLevel()
-	{
-
-	}
-
 
 
 
