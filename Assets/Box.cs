@@ -8,11 +8,36 @@ public class Box : MonoBehaviour
 	Box[] boxes;
 #endif
 
+	[SerializeField]
+	int sortingOrder = -1;
+
 	public Segment ParentSegment {get; private set;}
+
+
 
 	void Start()
 	{
 		ParentSegment = transform.parent.GetComponent<Segment>();
+
+		BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
+
+		if (boxCollider == null)
+		{
+			boxCollider = gameObject.AddComponent<BoxCollider>();
+			boxCollider.isTrigger = true;
+		}
+
+	}
+
+
+	void Update()
+	{
+		if (sortingOrder != -1)
+		{
+			renderer.sortingLayerName = "Default";
+			renderer.sortingOrder = sortingOrder;
+
+		}
 	}
 
 
@@ -81,6 +106,10 @@ public class Box : MonoBehaviour
 	}
 
 
+	void OnMouseDown()
+	{
+		Debug.Log ("Box sortinglayer change");
+	}
 
 #endif
 }
