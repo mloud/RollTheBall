@@ -81,6 +81,11 @@ public class Segment : MonoBehaviour
 			Destroy(copy.collider);
 			Destroy(copy.GetComponent<Box>());
 
+			for (int j = 0; j < copy.transform.childCount; ++j)
+			{
+				Destroy (copy.transform.GetChild(j).gameObject);
+			}
+
 
 			OrthoVisuals.Add(orthoVis);
 			copy.renderer.enabled = false;

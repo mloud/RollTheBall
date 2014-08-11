@@ -21,7 +21,20 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 	}
 	
 	public Transform RootPoint { get; set; }
+
+	public SceneController()
+	{
+		UI.TouchManager.Instance.Register(this);
+		UI.TouchManager.Instance.RegisterObjectHitListener(this);
+	}
 	
+	public void Release()
+	{
+		UI.TouchManager.Instance.Unregister(this);
+		UI.TouchManager.Instance.UntegisterObjectHitListener(this);
+	}
+
+	public bool Rotating { get { return _rotateBy != null; }} 
 
 	private Vector3 _initialRotation;
 	private UI.Touch? _touchBegan;
@@ -37,17 +50,7 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 
 	private const int ROTATION_ANGLE = 90;
 
-	public SceneController()
-	{
-		UI.TouchManager.Instance.Register(this);
-		UI.TouchManager.Instance.RegisterObjectHitListener(this);
-	}
-	
-	public void Release()
-	{
-		UI.TouchManager.Instance.Unregister(this);
-		UI.TouchManager.Instance.UntegisterObjectHitListener(this);
-	}
+
 
 
 

@@ -140,6 +140,9 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 
 	private void HighlightConnectedSegments()
 	{
+		if (SceneController.Rotating)
+			return;
+
 		for (int i = 0; i < Segments.Count; ++i)
 		{
 			Segments[i].Highlight(false);
