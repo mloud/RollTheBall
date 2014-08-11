@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+
+
 public class Segment : MonoBehaviour
 {
 	public List<Connector> Connectors 
@@ -237,19 +239,8 @@ public class Segment : MonoBehaviour
 		}
 	}
 
-	public void ShiftBy(Vector3 vec)
-	{
-		Shifted = true;
 
-		transform.Translate(vec, Space.World);
-	}
 
-	public void ShiftBack()
-	{
-		if (Shifted)
-		{
-			transform.position = _originalPos;
-			Shifted = false;
-		}
-	}
+
+
 }

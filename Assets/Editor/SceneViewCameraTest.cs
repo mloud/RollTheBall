@@ -36,6 +36,38 @@ public class SceneViewCameraTest : ScriptableObject
 		SetCameras(new Vector3(0,0,1));
 	}
 
+	[MenuItem("MultiCamera/Show_Plus_90 ")]
+	static private void RotateGameObjectBy_PLUS_90()
+	{
+		RotateGameObjectBy(90);
+	}
+	[MenuItem("MultiCamera/Show_Minus_90 ")]
+	static private void RotateGameObjectBy_MINUS_90()
+	{
+		RotateGameObjectBy(-90);
+	}
+
+	 static private void RotateGameObjectBy(float angle)
+	{
+		if (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<Segment>() != null)
+		{
+			GameObject copy = Instantiate(Selection.activeGameObject, 
+			                              Selection.activeGameObject.transform.position,
+			                              Selection.activeGameObject.transform.rotation) as GameObject;
+
+			DestroyImmediate(copy.GetComponent<Segment>());
+			//copy.transform.parent = Selection.activeGameObject.transform.parent;
+			copy.transform.parent = GameObject.Find ("Editor").transform;
+			copy.transform.RotateAround(GameObject.Find("Root").transform.position, new Vector3(0,1,0), angle);
+			copy.name = "EditorGameObject";
+
+			Renderer[] rndrs = copy.GetComponentsInChildren<Renderer>();
+			for (int i = 0; i < rndrs.Length;++i)
+			{
+				rndrs[i].material.color = Color.green;
+			}
+		}
+	}
 
 
 
