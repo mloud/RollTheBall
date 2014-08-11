@@ -1,8 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Settings
+public class Settings : MonoBehaviour
 {
-	public static float tresholdDistance = 15; 
+	public static Settings Instance { get { return _instance; }} 
 
+
+	private static Settings _instance;
+
+	void Awake()
+	{
+		_instance = this;
+	}
+
+	[SerializeField]
+	public float TresholdDistance = 15; 
+
+	[SerializeField]
+	public bool ApplySegmentShift = false;
+
+
+	
 }

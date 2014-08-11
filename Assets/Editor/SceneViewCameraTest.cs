@@ -132,7 +132,7 @@ public class SceneViewCameraTest : ScriptableObject
 						target.name = "SceneCamera_" + i;
 
 						sceneViewCamera = target.AddComponent<Camera>();
-						//sceneViewCamera.cullingMask = 0;
+						sceneViewCamera.cullingMask ^= (1 << LayerMask.NameToLayer("UI"));
 					}
 					CopyCamareSettings(gameCamera, sceneViewCamera);
 				}

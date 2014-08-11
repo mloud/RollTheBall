@@ -107,7 +107,7 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 						Vector3 pos1 = Camera.main.WorldToScreenPoint(otherConn.transform.position);
 					
 						
-						if ( (pos1 - pos2).magnitude < Settings.tresholdDistance)
+						if ( (pos1 - pos2).magnitude < Settings.Instance.TresholdDistance)
 						{
 							connectedConnectors.Add(otherConn);
 						}
@@ -159,9 +159,12 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 					Segments[i].Highlight(true);
 					Segments[j].Highlight(true);
 				
-					Segments[i].ConnectTo(conn.Conn1, conn.Conn2);
-					Segments[j].ConnectTo(conn.Conn2, conn.Conn1);
 
+					if (Settings.Instance.ApplySegmentShift)
+					{
+						Segments[i].ConnectTo(conn.Conn1, conn.Conn2);
+						Segments[j].ConnectTo(conn.Conn2, conn.Conn1);
+					}
 				}
 			}
 		}

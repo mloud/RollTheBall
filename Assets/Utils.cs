@@ -90,7 +90,7 @@ public static class Utils
 					Vector3 pos1 = camera.WorldToScreenPoint(connector1.transform.position);
 					Vector3 pos2 = camera.WorldToScreenPoint(connector2.transform.position);
 					
-					if ( (pos1 - pos2).magnitude < Settings.tresholdDistance)
+					if ( (pos1 - pos2).magnitude < Settings.Instance.TresholdDistance)
 					{
 						SegmentConnection segConn = new SegmentConnection();
 						segConn.Conn1 = connector1;
@@ -110,7 +110,7 @@ public static class Utils
 		Vector3 pos1 = camera.WorldToScreenPoint(c1.transform.position);
 		Vector3 pos2 = camera.WorldToScreenPoint(c2.transform.position);
 		
-		if ( (pos1 - pos2).sqrMagnitude < Settings.tresholdDistance * Settings.tresholdDistance)
+		if ( (pos1 - pos2).sqrMagnitude < Settings.Instance.TresholdDistance * Settings.Instance.TresholdDistance)
 		{
 			return true;
 		}
