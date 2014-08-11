@@ -149,10 +149,16 @@ public class Game : MonoBehaviour, UI.IObjectHitListener
 		{
 			for (int j = i + 1; j < Segments.Count; ++j)
 			{
-				if (Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j]) != null)
+				Utils.SegmentConnection conn = Utils.IsSegmentConnected(Camera.main, Segments[i], Segments[j]);
+
+				if (conn != null)
 				{
 					Segments[i].Highlight(true);
 					Segments[j].Highlight(true);
+				
+					Segments[i].ConnectTo(conn.Conn1, conn.Conn2);
+					Segments[j].ConnectTo(conn.Conn2, conn.Conn1);
+
 				}
 			}
 		}

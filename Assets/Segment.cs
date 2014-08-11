@@ -25,13 +25,68 @@ public class Segment : MonoBehaviour
 	private List<Connector> _connectors;
 
 
+	private Vector3 _originalPos { get; set; }
+	private bool Shifted { get; set; }
+
+
+
+	class OrthoVisual
+	{
+		public Renderer renderer;
+		public Transform origTransform;
+	}
+
+	private List<OrthoVisual> OrthoVisuals { get; set; }
+	private GameObject Visual { get; set; }
+
+
+	private class Connection
+	{
+		public Connector ownConnector { get; set; }
+		public Connector otherConnector { get; set; }
+	}
+
+
+	private Connection ActiveConnection { get; set; }
+
 	private void Awake()
 	{
+		_originalPos = transform.position;
+
 		MakeListOfPipes();
 		MakeListOfConnectors();
 		MakeListOfWaypoints();
 		MakeListOfManipulators();
+
+		CreateOrthoVisuals();
+	
+	
+		Visual = transform.FindChild("Box").gameObject;
 	}
+
+	private void CreateOrthoVisuals()
+	{
+		OrthoVisuals = new List<OrthoVisual>();
+		Box[] boxes = gameObject.transform.GetComponentsInChildren<Box>();
+		
+		for (int i = 0; i < boxes.Length; ++i)
+		{
+			GameObject copy = Instantiate(boxes[i].gameObject, boxes[i].transform.position, boxes[i].transform.rotation) as GameObject;
+			copy.transform.parent =  boxes[i].transform.parent;
+			
+			OrthoVisual orthoVis = new OrthoVisual();
+			orthoVis.origTransform = boxes[i].gameObject.transform;
+			orthoVis.renderer = copy.renderer;
+
+			Destroy(copy.collider);
+			Destroy(copy.GetComponent<Box>());
+
+
+			OrthoVisuals.Add(orthoVis);
+			copy.renderer.enabled = false;
+		}
+	}
+
 
 	// Creates list of all pipes in segment
 	private void MakeListOfPipes()
@@ -64,6 +119,7 @@ public class Segment : MonoBehaviour
 			Waypoint[] waypoints = PipeList[i].GetComponentsInChildren<Waypoint>();
 			Waypoints.AddRange(waypoints);
 		}
+
 	}
 
 	private void MakeListOfManipulators()
@@ -113,7 +169,28 @@ public class Segment : MonoBehaviour
 	void Update()
 	{
 
+		if (ActiveConnection != null)
+		{
+			if (Utils.IsConnectorsConnected(Camera.main, ActiveConnection.ownConnector, ActiveConnection.otherConnector))
+			{
+
+			}
+			else
+			{
+				ActiveConnection = null;
+
+				for (int i = 0; i < OrthoVisuals.Count;++i)
+				{
+					OrthoVisuals[i].renderer.enabled = false;
+				}
+				Visual.renderer.enabled = true;
+			}
+		}
+	
 	}
+
+
+
 
 	public void OnTouch()
 	{
@@ -125,4 +202,49 @@ public class Segment : MonoBehaviour
 	}
 
 
+
+	public void ConnectTo(Connector ownConnector, Connector otherConnector)
+	{
+		if (ActiveConnection == null)
+		{
+			ActiveConnection = new Connection();
+
+			ActiveConnection.ownConnector = ownConnector;
+			ActiveConnection.otherConnector = otherConnector;
+
+			float dist1 = (Camera.main.transform.position - ownConnector.transform.position).magnitude;
+			float dist2 = (Camera.main.transform.position - otherConnector.transform.position).magnitude;
+
+			if (dist1 > dist2)
+			{
+
+				for (int i = 0; i < OrthoVisuals.Count; ++i)
+				{
+					OrthoVisuals[i].renderer.enabled = true;
+					OrthoVisuals[i].renderer.gameObject.transform.position = OrthoVisuals[i].origTransform.position;
+					OrthoVisuals[i].renderer.gameObject.transform.rotation = OrthoVisuals[i].origTransform.rotation;
+					OrthoVisuals[i].renderer.gameObject.transform.Translate( Utils.ComputeCameraNormal(Camera.main).normalized * Mathf.Abs(dist1 - dist2),Space.World);
+				}
+			
+				Visual.renderer.enabled = false;
+			}
+
+		}
+	}
+
+	public void ShiftBy(Vector3 vec)
+	{
+		Shifted = true;
+
+		transform.Translate(vec, Space.World);
+	}
+
+	public void ShiftBack()
+	{
+		if (Shifted)
+		{
+			transform.position = _originalPos;
+			Shifted = false;
+		}
+	}
 }

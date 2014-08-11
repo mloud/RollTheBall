@@ -118,4 +118,15 @@ public static class Utils
 		return false;
 	}
 
+	public static Vector3 ComputeCameraNormal(Camera camera)
+	{
+		Vector3 p1 = camera.ViewportToWorldPoint(new Vector3(0, 0, camera.nearClipPlane));  
+		Vector3 p2 = camera.ViewportToWorldPoint(new Vector3(1, 0, camera.nearClipPlane));
+		Vector3 p3 = camera.ViewportToWorldPoint(new Vector3(1, 1, camera.nearClipPlane));
+
+		return Vector3.Cross(p1 - p2, p3 - p2);
+
+	}
+
+
 }
