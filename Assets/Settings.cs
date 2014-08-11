@@ -3,6 +3,6 @@ using System.Collections;
 
 public class Settings
 {
-	public static float tresholdDistance = 10; 
+	public static float tresholdDistance = 15; 
 
 }
