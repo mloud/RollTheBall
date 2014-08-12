@@ -164,10 +164,15 @@ public class SceneController : UI.ITouchListener, UI.IObjectHitListener
 		}
 		else
 		{
-			List<Box> boxes = UI.TouchManager.Instance.GetGameObjectsAt<Box>(touch.Position);
-			if (boxes.Count > 0)
+			Ball ball = GameObject.FindObjectOfType<Ball>();
+
+			if (ball != null & ball.CurrentState != Ball.State.Moving)
 			{
-				boxes[0].ParentSegment.OnTouch();
+				List<Box> boxes = UI.TouchManager.Instance.GetGameObjectsAt<Box>(touch.Position);
+				if (boxes.Count > 0)
+				{
+					boxes[0].ParentSegment.OnTouch();
+				}
 			}
 		}
 

@@ -126,7 +126,7 @@ public class SceneViewCameraTest : ScriptableObject
 					Camera sceneViewCamera = ArrayUtility.Find(cameras, x=>x.name == ("SceneCamera_" + i.ToString()));
 			
 					// doesn't exist -> create
-					if (sceneViewCamera == null)
+					if (sceneViewCamera == null && false)
 					{
 						destroyDummyGo = false; // keep game object and attach SceneViewCamera
 						target.name = "SceneCamera_" + i;
